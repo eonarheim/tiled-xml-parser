@@ -193,27 +193,50 @@
                  "type":"NPC",
                  "visible":true,
                  "width":0,
-                 "x":170,
-                 "y":116
+                 "x":157.333333333333,
+                 "y":111.666666666667
+                }, 
+                {
+                 "id":6,
+                 "template":"KeyBlock.tx",
+                 "type":"Keyable",
+                 "x":440.666666666667,
+                 "y":121.666666666667
+                }, 
+                {
+                 "height":17.875,
+                 "id":7,
+                 "name":"HelloText",
+                 "rotation":35,
+                 "text":
+                    {
+                     "color":"#ff0000",
+                     "fontfamily":"Segoe Print",
+                     "halign":"justify",
+                     "pixelsize":48,
+                     "text":"Hello World",
+                     "valign":"center"
+                    },
+                 "type":"FadeIN",
+                 "visible":true,
+                 "width":80,
+                 "x":400.666666666667,
+                 "y":63.0625
                 }],
-         "offsetx":0,
-         "offsety":13,
          "opacity":1,
-         "parallaxx":2.5,
          "properties":[
                 {
                  "name":"excalibur",
                  "type":"bool",
                  "value":true
                 }],
-         "tintcolor":"#0000ff",
          "type":"objectgroup",
          "visible":true,
          "x":0,
          "y":0
         }],
  "nextlayerid":10,
- "nextobjectid":6,
+ "nextobjectid":8,
  "orientation":"orthogonal",
  "parallaxoriginx":8,
  "parallaxoriginy":16,

@@ -107,6 +107,16 @@ const TiledPoint = z.object({
 
 const TiledPolygon = z.array(TiledPoint);
 
+const TiledText = z.object({
+    text: z.string(),
+    color: z.string().optional(),
+    fontfamily: z.string().optional(),
+    pixelsize: z.number().optional(),
+    wrap: z.boolean().optional(),
+    halign: z.union([z.literal('left'), z.literal('center'), z.literal('right'),  z.literal('justify')]).optional(),
+    valign: z.union([z.literal('top'), z.literal('center'),  z.literal('bottom')]).optional()
+})
+
 const TiledObject = z.object({
     id: z.number(),
     name: z.string(),
@@ -117,6 +127,8 @@ const TiledObject = z.object({
     height: z.number(),
     width: z.number(),
     visible: z.boolean(),
+    gid: z.number().optional(),
+    text: TiledText.optional(),
     point: z.boolean().optional(),
     ellipse: z.boolean().optional(),
     polygon: TiledPolygon.optional(),
@@ -327,6 +339,7 @@ export class TiledParser {
             'offsetx',
             'offsety',
             'id',
+            'gid',
             'x',
             'y',
             'rotation',
@@ -365,6 +378,45 @@ export class TiledParser {
         const propertiesNode = objectNode.querySelector('properties') as Element;
         if (propertiesNode) {
             this._parsePropertiesNode(propertiesNode, object);
+        }
+
+        const text = objectNode.querySelector('text') as Element;
+        if (text) {
+            console.log(text);
+            object.text = {
+                text: text.textContent
+            }
+
+            const fontfamily = text.getAttribute('fontfamily');
+            if (fontfamily) {
+                object.text.fontfamily = fontfamily;
+            }
+
+            const color = text.getAttribute('color');
+            if (color) {
+                object.text.color = color;
+            }
+
+            const pixelsize = text.getAttribute('pixelsize');
+            if (pixelsize) {
+                object.text.pixelsize = this._coerceNumber(pixelsize);
+            }
+
+            const wrap = text.getAttribute('wrap');
+            if (wrap) {
+                object.text.wrap = this._coerceBoolean(wrap);
+            }
+
+            const valign = text.getAttribute('valign');
+            if (valign) {
+                object.text.valign = valign;
+            }
+            const halign = text.getAttribute('halign');
+            if (halign) {
+                object.text.halign = halign;
+            }
+
+
         }
 
         const point = objectNode.querySelector('point');
