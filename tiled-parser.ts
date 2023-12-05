@@ -62,14 +62,37 @@ const TiledTileLayerCSV = TiledTileLayerBase.extend({
     encoding: z.literal('csv')
 })
 
+const TiledTileLayerGZIP = TiledTileLayerBase.extend({
+    data: z.array(z.number()),
+    encoding: z.literal('base64'),
+    compression: z.literal('gzip'),
+})
+
+const TiledTileLayerZLib = TiledTileLayerBase.extend({
+    data: z.array(z.number()),
+    encoding: z.literal('base64'),
+    compression: z.literal('zlib'),
+})
+
+const TiledTileLayerZStandard = TiledTileLayerBase.extend({
+    data: z.array(z.number()),
+    encoding: z.literal('base64'),
+    compression: z.literal('zstandard'),
+})
+
 const TiledTileLayerBase64 = TiledTileLayerBase.extend({
     data: z.string(),
     encoding: z.literal('base64'),
     compression: z.string(),
 });
 
-const TiledTileLayer = z.discriminatedUnion('encoding', 
-    [TiledTileLayerBase64, TiledTileLayerCSV]);
+const TiledTileLayer = z.union([
+    TiledTileLayerBase64,
+    TiledTileLayerCSV,
+    TiledTileLayerGZIP,
+    TiledTileLayerZLib,
+    TiledTileLayerZStandard
+]);
 
 const TiledPoint = z.object({
     x: z.number(),
@@ -431,7 +454,12 @@ export class TiledParser {
                 case 'data': {
                     const encoding = layerChild.getAttribute('encoding');
                     // technically breaking compat, but this is useful
-                    layer.encoding = encoding; 
+                    layer.encoding = encoding;
+
+                    const compression = layerChild.getAttribute('compression');
+                    if (compression) {
+                        layer.compression = compression;
+                    }
 
                     switch(layer.encoding) {
                         case 'base64': {
