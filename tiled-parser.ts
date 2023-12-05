@@ -225,7 +225,7 @@ export type TiledLayer = z.infer<typeof TiledLayer>;
 export type TiledProperty = z.infer<typeof TiledProperty>;
 export type TiledPropertyTypes = Pick<TiledProperty, 'type'>['type'];
 
-export class Parser {
+export class TiledParser {
 
     _coerceNumber(value: any) {
         return +value;

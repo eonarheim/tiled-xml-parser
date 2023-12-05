@@ -5,13 +5,13 @@ import levelTMX from './level.tmx';
 import tilsetTSJ from './Platformer.tsj';
 import tilsetTSX from './Platformer.tsx';
 
-import { Parser } from './parser';
+import { TiledParser } from './tiled-parser';
 import { diffString } from 'json-diff';
 
 const tmx$ = document.getElementById('tmx') as HTMLPreElement;
 tmx$.innerText = levelTMX;
 
-const parser = new Parser();
+const parser = new TiledParser();
 
 const tm = parser.parse(levelTMX);
 const ts = parser.parseExternalTsx(tilsetTSX);
