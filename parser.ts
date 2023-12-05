@@ -120,6 +120,7 @@ const TiledImageLayer = z.object({
     x: z.number(),
     y: z.number(),
     id: z.number(),
+    type: z.literal('imagelayer'),
     image: z.string(),
     opacity: z.number(),
     properties: z.array(TiledProperty).optional(),
