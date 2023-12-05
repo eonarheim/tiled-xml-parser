@@ -171,7 +171,7 @@ const TiledTile = z.object({
 
 const TiledTileset = z.object({
     name: z.string(),
-    firstgid: z.number(),
+    firstgid: z.number().optional(),
     image: z.string(),
     imagewidth: z.number(),
     imageheight: z.number(),
@@ -182,6 +182,11 @@ const TiledTileset = z.object({
     spacing: z.number(),
     margin: z.number(),
     tiles: z.array(z.union([TiledTile, TiledAnimation]))
+})
+
+const TiledTilesetExternal = z.object({
+    firstgid: z.number(),
+    source: z.string()
 })
 
 const TiledMap = z.object({
@@ -201,7 +206,7 @@ const TiledMap = z.object({
     renderorder: z.string(),
     backgroundcolor: z.string().optional(),
     layers: z.array(TiledLayer),
-    tilesets: z.array(TiledTileset),
+    tilesets: z.array(TiledTileset.or(TiledTilesetExternal)),
     properties: z.array(TiledProperty).optional()
 })
 
@@ -210,6 +215,7 @@ export type TiledObjectGroup = z.infer<typeof TiledObjectGroup>;
 export type TiledObject = z.infer<typeof TiledObject>;
 export type TiledTile = z.infer<typeof TiledTile>;
 export type TiledTileset = z.infer<typeof TiledTileset>;
+export type TiledTilesetExternal = z.infer<typeof TiledTilesetExternal>;
 export type TiledMap = z.infer<typeof TiledMap>;
 export type TiledLayer = z.infer<typeof TiledLayer>;
 export type TiledProperty = z.infer<typeof TiledProperty>;
@@ -333,12 +339,16 @@ export class Parser {
         return TiledObject.parse(object);
     }
 
-    parseTileset(tilesetNode: Element): TiledTileset {
+    parseTileset(tilesetNode: Element): TiledTileset | TiledTilesetExternal {
         const tileset: any = {};
         tileset.spacing = 0;
         tileset.margin = 0;
         tileset.tiles = [];
         this._parseAttributes(tilesetNode, tileset);
+
+        if (tileset.source) {
+            return TiledTilesetExternal.parse(tileset);
+        }
 
         for (let tilesetChild of tilesetNode.children) {
             switch (tilesetChild.tagName) {
@@ -478,6 +488,20 @@ export class Parser {
         return TiledLayer.parse(imageLayer);
     }
 
+    /**
+     * Takes Tiled tmx xml and produces the equivalent Tiled txj (json) content
+     * @param xml 
+     */
+    parseExternalTsx(xml: string): TiledTileset {
+        const domParser = new DOMParser();
+        const doc = domParser.parseFromString(xml, 'application/xml');
+        const tilesetElement = doc.querySelector('tileset') as Element;
+
+        const tileset = this.parseTileset(tilesetElement);
+
+        return TiledTileset.parse(tileset);
+    }
+
 
     /**
      * Takes Tiled tmx xml and produces the equivalent Tiled tmj (json) content
@@ -488,7 +512,7 @@ export class Parser {
         const domParser = new DOMParser();
         const doc = domParser.parseFromString(xml, 'application/xml');
 
-        const mapElement = doc.getElementsByTagName('map')[0];
+        const mapElement = doc.querySelector('map') as Element;
 
         const tiledMap: any = {};
         tiledMap.type = 'map';

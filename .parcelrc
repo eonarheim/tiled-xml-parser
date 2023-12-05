@@ -1,6 +1,6 @@
 {
   "extends": "@parcel/config-default",
   "transformers": {
-    "*.{tmx,tsx,tmj}": ["@parcel/transformer-inline-string"]
+    "*.{tmx,tsx,tmj,tsj}": ["@parcel/transformer-inline-string"]
   }
 }
