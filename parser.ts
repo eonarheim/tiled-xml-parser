@@ -44,14 +44,9 @@ const TiledProperty = z.discriminatedUnion("type", [
     TiledColorProperty
 ]);
 
-
-
-const TiledTileLayer = z.object({
+const TiledTileLayerBase = z.object({
     name: z.string(),
     type: z.literal("tilelayer"),
-    compression: z.string(),
-    data: z.string(),
-    encoding: z.string(),
     height: z.number(),
     width: z.number(),
     x: z.number(),
@@ -60,7 +55,21 @@ const TiledTileLayer = z.object({
     opacity: z.number(),
     properties: z.array(TiledProperty).optional(),
     visible: z.boolean(),
+});
+
+const TiledTileLayerCSV = TiledTileLayerBase.extend({
+    data: z.array(z.number()),
+    encoding: z.literal('csv')
 })
+
+const TiledTileLayerBase64 = TiledTileLayerBase.extend({
+    data: z.string(),
+    encoding: z.literal('base64'),
+    compression: z.string(),
+});
+
+const TiledTileLayer = z.discriminatedUnion('encoding', 
+    [TiledTileLayerBase64, TiledTileLayerCSV]);
 
 const TiledPoint = z.object({
     x: z.number(),
@@ -104,12 +113,42 @@ const TiledObjectLayer = z.object({
     properties: z.array(TiledProperty).optional(),
     visible: z.boolean(),
     objects: z.array(TiledObject)
-})
+});
 
-const TiledLayer = z.discriminatedUnion("type", [
+const TiledImageLayer = z.object({
+    name: z.string(),
+    x: z.number(),
+    y: z.number(),
+    id: z.number(),
+    image: z.string(),
+    opacity: z.number(),
+    properties: z.array(TiledProperty).optional(),
+    visible: z.boolean(),
+});
+
+// const TiledGroupLayerBase = z.object({
+//     name: z.string(),
+//     id: z.number(),
+// });
+// type TiledGroupLayer = z.infer<typeof TiledTileLayerBase> & {
+//     layers: TiledLayer[]
+// }
+const TiledLayer = z.union([
+    TiledImageLayer,
     TiledTileLayer,
-    TiledObjectLayer
-])
+    TiledObjectLayer,
+    // TiledGroupLayerBase
+]);
+
+// const TiledGroupLayer = TiledGroupLayerBase.extend({
+//     layers: z.lazy(() => z.array(TiledLayer))
+// });
+
+
+
+
+
+
 
 const TiledObjectGroup = z.object({
     draworder: z.string(),
@@ -147,18 +186,20 @@ const TiledTileset = z.object({
 
 const TiledMap = z.object({
     type: z.string(),
+    class: z.string().optional(),
     tiledversion: z.string(),
     version: z.string(),
     width: z.number(),
     height: z.number(),
     tilewidth: z.number(),
     tileheight: z.number(),
-    compressionlevel: z.number(),
+    compressionlevel: z.number().optional(),
     infinite: z.boolean(),
     nextlayerid: z.number(),
     nextobjectid: z.number(),
     orientation: z.string(),
     renderorder: z.string(),
+    backgroundcolor: z.string().optional(),
     layers: z.array(TiledLayer),
     tilesets: z.array(TiledTileset),
     properties: z.array(TiledProperty).optional()
@@ -226,11 +267,12 @@ export class Parser {
             'id',
             'x',
             'y',
-            'rotation'
+            'rotation',
         ];
 
-        const booleanProps: (keyof TiledMap)[] = [
-            "infinite"
+        const booleanProps = [
+            "infinite",
+            'visible'
         ]
 
         for (let attribute of node.attributes) {
@@ -373,8 +415,20 @@ export class Parser {
                     break;
                 }
                 case 'data': {
-                    layer.encoding = layerChild.getAttribute('encoding');
-                    layer.data = layerChild.textContent?.trim();
+                    const encoding = layerChild.getAttribute('encoding');
+                    // technically breaking compat, but this is useful
+                    layer.encoding = encoding; 
+
+                    switch(layer.encoding) {
+                        case 'base64': {
+                            layer.data = layerChild.textContent?.trim();
+                            break;
+                        }
+                        case 'csv': {// csv case
+                            layer.data = layerChild.textContent?.split(',').map(id => +id);
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -408,6 +462,28 @@ export class Parser {
         return TiledLayer.parse(group);
     }
 
+    parseImageLayer(imageNode: Element): TiledLayer {
+        const imageLayer: any = {};
+        imageLayer.type = 'imagelayer';
+        imageLayer.visible = true;
+        imageLayer.x = 0;
+        imageLayer.y = 0;
+        imageLayer.opacity = 1;
+
+        const image = imageNode.querySelector('image');
+        imageLayer.image = image?.getAttribute('source');
+
+        this._parseAttributes(imageNode, imageLayer);
+        
+        return TiledLayer.parse(imageLayer);
+    }
+
+
+    /**
+     * Takes Tiled tmx xml and produces the equivalent Tiled tmj (json) content
+     * @param xml 
+     * @returns 
+     */
     parse(xml: string): TiledMap {
         const domParser = new DOMParser();
         const doc = domParser.parseFromString(xml, 'application/xml');
@@ -422,29 +498,46 @@ export class Parser {
 
         this._parseAttributes(mapElement, tiledMap);
 
-        for (let mapChild of mapElement.children) {
-            console.log(mapChild);
-            switch (mapChild.tagName) {
+        const parseHelper = (node: Element) => {
+            console.log(node);
+            switch (node.tagName) {
+                case 'group': {
+                    // recurse through groups!
+                    // TODO currently we support groups by flattening them :/
+                    for (let child of node.children) {
+                        parseHelper(child);
+                    }
+                    break;
+                }
                 case 'layer': {
-                    const layer = this.parseTileLayer(mapChild);
+                    const layer = this.parseTileLayer(node);
                     tiledMap.layers.push(layer);
                     break;
                 }
                 case 'properties': {
-                    this._parsePropertiesNode(mapChild, tiledMap);
+                    this._parsePropertiesNode(node, tiledMap);
                     break;
                 }
                 case 'tileset': {
-                    const tileset = this.parseTileset(mapChild);
+                    const tileset = this.parseTileset(node);
                     tiledMap.tilesets.push(tileset);
                     break;
                 }
                 case 'objectgroup': {
-                    const objectgroup = this.parseObjectGroup(mapChild);
+                    const objectgroup = this.parseObjectGroup(node);
                     tiledMap.layers.push(objectgroup);
                     break;
                 }
+                case 'imagelayer': {
+                    const imageLayer = this.parseImageLayer(node);
+                    tiledMap.layers.push(imageLayer);
+                    break;
+                }
             }
+        }
+
+        for (let mapChild of mapElement.children) {
+            parseHelper(mapChild);
         }
 
         console.log(mapElement);
