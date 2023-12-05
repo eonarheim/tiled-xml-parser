@@ -127,6 +127,8 @@ const TiledImageLayer = z.object({
     visible: z.boolean(),
 });
 
+
+// TODO recursive Group Layer definition
 // const TiledGroupLayerBase = z.object({
 //     name: z.string(),
 //     id: z.number(),
@@ -144,12 +146,6 @@ const TiledLayer = z.union([
 // const TiledGroupLayer = TiledGroupLayerBase.extend({
 //     layers: z.lazy(() => z.array(TiledLayer))
 // });
-
-
-
-
-
-
 
 const TiledObjectGroup = z.object({
     draworder: z.string(),
@@ -185,6 +181,12 @@ const TiledTileset = z.object({
     tiles: z.array(z.union([TiledTile, TiledAnimation]))
 })
 
+const TiledTilesetFile = TiledTileset.extend({
+    tiledversion: z.string(),
+    type: z.literal('tileset'),
+    version: z.string()
+});
+
 const TiledTilesetExternal = z.object({
     firstgid: z.number(),
     source: z.string()
@@ -217,6 +219,7 @@ export type TiledObject = z.infer<typeof TiledObject>;
 export type TiledTile = z.infer<typeof TiledTile>;
 export type TiledTileset = z.infer<typeof TiledTileset>;
 export type TiledTilesetExternal = z.infer<typeof TiledTilesetExternal>;
+export type TiledTilesetFile = z.infer<typeof TiledTilesetFile>;
 export type TiledMap = z.infer<typeof TiledMap>;
 export type TiledLayer = z.infer<typeof TiledLayer>;
 export type TiledProperty = z.infer<typeof TiledProperty>;
@@ -493,14 +496,17 @@ export class Parser {
      * Takes Tiled tmx xml and produces the equivalent Tiled txj (json) content
      * @param xml 
      */
-    parseExternalTsx(xml: string): TiledTileset {
+    parseExternalTsx(xml: string): TiledTilesetFile {
         const domParser = new DOMParser();
         const doc = domParser.parseFromString(xml, 'application/xml');
         const tilesetElement = doc.querySelector('tileset') as Element;
 
         const tileset = this.parseTileset(tilesetElement);
 
-        return TiledTileset.parse(tileset);
+        (tileset as any).type = 'tileset';
+        this._parseAttributes(tilesetElement, tileset);
+
+        return TiledTilesetFile.parse(tileset);
     }
 
 

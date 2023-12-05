@@ -15,14 +15,19 @@ const parser = new Parser();
 
 const tm = parser.parse(levelTMX);
 const ts = parser.parseExternalTsx(tilsetTSX);
-console.log(ts);
 
 const tmj$ = document.getElementById('tmj') as HTMLPreElement;
 tmj$.innerText = JSON.stringify(tm, null, 2);
 
-const matches$ = document.getElementById('matches') as HTMLDivElement;
+const matches$ = document.getElementById('tmj-diff') as HTMLDivElement;
 matches$.innerText = diffString(tm, JSON.parse(levelTMJ), {
-    excludeKeys: ['x', 'y'] // for some reason the precision is different
+    excludeKeys: ['encoding'], 
+    precision: 3  // for some reason the precision is different between Tiled's tmx and tmj
+});
+
+const tsjDiff$ = document.getElementById('tsj-diff') as HTMLDivElement;
+tsjDiff$.innerText = diffString(ts, JSON.parse(tilsetTSJ), {
+    precision: 3
 });
 
 
