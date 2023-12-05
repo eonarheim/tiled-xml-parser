@@ -1,22 +1,26 @@
 { "backgroundcolor":"#22b2b2",
  "class":"test",
- "compressionlevel":4,
+ "compressionlevel":1,
  "height":20,
  "infinite":false,
  "layers":[
         {
+         "class":"ImageLayerClass",
          "id":7,
          "image":"tilemap.png",
          "name":"Image Layer 1",
          "opacity":1,
+         "tintcolor":"#00aaff",
+         "transparentcolor":"#55aa00",
          "type":"imagelayer",
          "visible":false,
          "x":0,
          "y":0
         }, 
         {
+         "class":"TiledLayerClass",
          "compression":"zstd",
-         "data":"KLUv\/WBgCDUDAKAAAMsBAMAAlwAAAHoAAAB7fHt9mTMg4IXWCNAQCWiggYZIgAYaaIgENNBAQ0hAAw00RAIaaKAhJKCBBhoiAQ00oCES0EADDZGABhoYegKMMx0R6Sh4AJfdfXcBB\/YAhh2p8bYKWA==",
+         "data":"KLUv\/WBgCLUDAKQCAADLAQDAAMAAlwAAAHoAAAB7fHx7fZkAmQCZAJkAmQCZAJkAmQCZAJkAIACgEwboASVjgApQHgOUAaUwQA8oGQNUgPIYoAwohQF6QMkYoAKUxwBlQCm8o4fDGIM1sAK4txMFMDfTYLtOHpwGsOYAlHtbgTY=",
          "encoding":"base64",
          "height":20,
          "id":1,
@@ -36,7 +40,7 @@
         }, 
         {
          "compression":"zstd",
-         "data":"KLUv\/WBgCA0EAJQCAAC9AgDbtAEAs4OxrwGrAZlqAKoBDAsMKQApACkAKQApACkAKQApACkuILCDgnSdMHpKxlBRHqPMUhg9JWOoKI9RphSGnpIxKuvruEqylbBEyikQwooxxMzdECGRe0ICH8BIBALtA3MejPvCW1\/O+Ok+YxZPSo3uKZNSN6KaNg==",
+         "data":"KLUv\/WBgCAUEAMgAAL0CANu0AQCzg7GDAK+vAauZaqoBDAspOSCwg4LCMQggUAkgAAICLQECIECgEiAAAgQqAQJBQKASQAAEBCoBBEBAoCVAAAQIFEiw1bcSJIBjuoQDqlbGYs1si+yIBQfnILaTm8jmL2A4FNPscsZK9xmzeFJqdE+ZlLoR1bQB",
          "encoding":"base64",
          "height":20,
          "id":4,
@@ -50,7 +54,7 @@
         }, 
         {
          "compression":"zstd",
-         "data":"KLUv\/WBgCD0CAIQCAACdBACBAAAAggAAAJ8AAACgAGoBAABsAQAAbQEAa3sAAAB8AAAAfQoAGYEfMKBXM4OwWvAyv5VZgwZQ3hJQBYrxrwIs",
+         "data":"KLUv\/WBgCEUCANQCAACdBACBAAAAggAAAJ8AAACgAGoBAABsAQAAbQEAagEAAGtrewAAAHwAAAB9CAAZ5X7AgB7ODN2XcbUGUN4SUAWK8a8CLA==",
          "encoding":"base64",
          "height":20,
          "id":2,
@@ -69,6 +73,7 @@
          "y":0
         }, 
         {
+         "class":"ObjectLayerClass",
          "draworder":"topdown",
          "id":5,
          "name":"Baddies",
@@ -132,6 +137,8 @@
          "y":0
         }, 
         {
+         "class":"GameClass",
+         "color":"#ff0000",
          "draworder":"topdown",
          "id":6,
          "name":"Game",
@@ -189,13 +196,17 @@
                  "x":170,
                  "y":116
                 }],
+         "offsetx":0,
+         "offsety":13,
          "opacity":1,
+         "parallaxx":2.5,
          "properties":[
                 {
                  "name":"excalibur",
                  "type":"bool",
                  "value":true
                 }],
+         "tintcolor":"#0000ff",
          "type":"objectgroup",
          "visible":true,
          "x":0,
@@ -204,6 +215,8 @@
  "nextlayerid":10,
  "nextobjectid":6,
  "orientation":"orthogonal",
+ "parallaxoriginx":8,
+ "parallaxoriginy":16,
  "properties":[
         {
          "name":"solid",

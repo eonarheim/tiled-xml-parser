@@ -47,6 +47,7 @@ const TiledProperty = z.discriminatedUnion("type", [
 const TiledTileLayerBase = z.object({
     name: z.string(),
     type: z.literal("tilelayer"),
+    class: z.string().optional(),
     height: z.number(),
     width: z.number(),
     x: z.number(),
@@ -55,6 +56,11 @@ const TiledTileLayerBase = z.object({
     opacity: z.number(),
     properties: z.array(TiledProperty).optional(),
     visible: z.boolean(),
+    tintcolor: z.string().optional(),
+    parallaxx: z.number().optional(),
+    parallaxy: z.number().optional(),
+    offsetx: z.number().optional(),
+    offsety: z.number().optional(),
 });
 
 const TiledTileLayerCSV = TiledTileLayerBase.extend({
@@ -129,9 +135,16 @@ const TiledObjectLayer = z.object({
     name: z.string(),
     draworder: z.string(),
     type: z.literal("objectgroup"),
+    class: z.string().optional(),
     x: z.number(),
     y: z.number(),
     id: z.number(),
+    color: z.string().optional(),
+    tintcolor: z.string().optional(),
+    parallaxx: z.number().optional(),
+    parallaxy: z.number().optional(),
+    offsetx: z.number().optional(),
+    offsety: z.number().optional(),
     opacity: z.number(),
     properties: z.array(TiledProperty).optional(),
     visible: z.boolean(),
@@ -144,10 +157,17 @@ const TiledImageLayer = z.object({
     y: z.number(),
     id: z.number(),
     type: z.literal('imagelayer'),
+    class: z.string().optional(),
     image: z.string(),
     opacity: z.number(),
     properties: z.array(TiledProperty).optional(),
     visible: z.boolean(),
+    tintcolor: z.string().optional(),
+    parallaxx: z.number().optional(),
+    parallaxy: z.number().optional(),
+    offsetx: z.number().optional(),
+    offsety: z.number().optional(),
+    transparentcolor: z.string().optional()
 });
 
 
@@ -228,8 +248,10 @@ const TiledMap = z.object({
     infinite: z.boolean(),
     nextlayerid: z.number(),
     nextobjectid: z.number(),
-    orientation: z.string(),
-    renderorder: z.string(),
+    parallaxoriginx: z.number().optional(),
+    parallaxoriginy: z.number().optional(),
+    orientation: z.union([z.literal("isometric"), z.literal("orthogonal"), z.literal("staggered"), z.literal("hexagonal")]),
+    renderorder: z.union([z.literal("right-down"), z.literal("right-up"), z.literal("left-down"), z.literal("left-up")]),
     backgroundcolor: z.string().optional(),
     layers: z.array(TiledLayer),
     tilesets: z.array(TiledTileset.or(TiledTilesetExternal)),
@@ -284,6 +306,7 @@ export class TiledParser {
     }
 
     _parseAttributes(node: Element, target: any) {
+        // attribute names to coerce into numbers
         const numberProps = [
             'width',
             'height',
@@ -297,12 +320,19 @@ export class TiledParser {
             'compressionlevel',
             'nextlayerid',
             'nextobjectid',
+            'parallaxoriginx',
+            'parallaxoriginy',
+            'parallaxx',
+            'parallaxy',
+            'offsetx',
+            'offsety',
             'id',
             'x',
             'y',
             'rotation',
         ];
 
+        // attribute names to coerce into booleans
         const booleanProps = [
             "infinite",
             'visible'
@@ -514,6 +544,11 @@ export class TiledParser {
 
         const image = imageNode.querySelector('image');
         imageLayer.image = image?.getAttribute('source');
+        
+        const transparentcolor = image?.getAttribute('trans');
+        if (transparentcolor) {
+            imageLayer.transparentcolor = '#' + transparentcolor;
+        }
 
         this._parseAttributes(imageNode, imageLayer);
         

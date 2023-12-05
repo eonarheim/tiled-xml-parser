@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" class="test" orientation="orthogonal" renderorder="right-down" compressionlevel="4" width="30" height="20" tilewidth="20" tileheight="20" infinite="0" backgroundcolor="#22b2b2" nextlayerid="10" nextobjectid="6">
+<map version="1.10" tiledversion="1.10.1" class="test" orientation="orthogonal" renderorder="right-down" compressionlevel="1" width="30" height="20" tilewidth="20" tileheight="20" infinite="0" parallaxoriginx="8" parallaxoriginy="16" backgroundcolor="#22b2b2" nextlayerid="10" nextobjectid="6">
  <editorsettings>
   <export target="level.tmj" format="json"/>
  </editorsettings>
@@ -83,20 +83,20 @@
   </tile>
  </tileset>
  <tileset firstgid="901" source="ExternalPlatformer.tsx"/>
- <imagelayer id="7" name="Image Layer 1" visible="0">
-  <image source="tilemap.png" width="630" height="630"/>
+ <imagelayer id="7" name="Image Layer 1" class="ImageLayerClass" visible="0" tintcolor="#00aaff">
+  <image source="tilemap.png" trans="55aa00" width="630" height="630"/>
  </imagelayer>
- <layer id="1" name="Ground" width="30" height="20">
+ <layer id="1" name="Ground" class="TiledLayerClass" width="30" height="20">
   <properties>
    <property name="solid" type="bool" value="true"/>
   </properties>
   <data encoding="base64" compression="zstd">
-   KLUv/WBgCDUDAKAAAMsBAMAAlwAAAHoAAAB7fHt9mTMg4IXWCNAQCWiggYZIgAYaaIgENNBAQ0hAAw00RAIaaKAhJKCBBhoiAQ00oCES0EADDZGABhoYegKMMx0R6Sh4AJfdfXcBB/YAhh2p8bYKWA==
+   KLUv/WBgCLUDAKQCAADLAQDAAMAAlwAAAHoAAAB7fHx7fZkAmQCZAJkAmQCZAJkAmQCZAJkAIACgEwboASVjgApQHgOUAaUwQA8oGQNUgPIYoAwohQF6QMkYoAKUxwBlQCm8o4fDGIM1sAK4txMFMDfTYLtOHpwGsOYAlHtbgTY=
   </data>
  </layer>
  <layer id="4" name="Foreground" width="30" height="20">
   <data encoding="base64" compression="zstd">
-   KLUv/WBgCA0EAJQCAAC9AgDbtAEAs4OxrwGrAZlqAKoBDAsMKQApACkAKQApACkAKQApACkuILCDgnSdMHpKxlBRHqPMUhg9JWOoKI9RphSGnpIxKuvruEqylbBEyikQwooxxMzdECGRe0ICH8BIBALtA3MejPvCW1/O+Ok+YxZPSo3uKZNSN6KaNg==
+   KLUv/WBgCAUEAMgAAL0CANu0AQCzg7GDAK+vAauZaqoBDAspOSCwg4LCMQggUAkgAAICLQECIECgEiAAAgQqAQJBQKASQAAEBCoBBEBAoCVAAAQIFEiw1bcSJIBjuoQDqlbGYs1si+yIBQfnILaTm8jmL2A4FNPscsZK9xmzeFJqdE+ZlLoR1bQB
   </data>
  </layer>
  <layer id="2" name="Platforms" width="30" height="20">
@@ -104,10 +104,10 @@
    <property name="solid" type="bool" value="true"/>
   </properties>
   <data encoding="base64" compression="zstd">
-   KLUv/WBgCD0CAIQCAACdBACBAAAAggAAAJ8AAACgAGoBAABsAQAAbQEAa3sAAAB8AAAAfQoAGYEfMKBXM4OwWvAyv5VZgwZQ3hJQBYrxrwIs
+   KLUv/WBgCEUCANQCAACdBACBAAAAggAAAJ8AAACgAGoBAABsAQAAbQEAagEAAGtrewAAAHwAAAB9CAAZ5X7AgB7ODN2XcbUGUN4SUAWK8a8CLA==
   </data>
  </layer>
- <objectgroup id="5" name="Baddies">
+ <objectgroup id="5" name="Baddies" class="ObjectLayerClass">
   <properties>
    <property name="excalibur" type="bool" value="true"/>
   </properties>
@@ -126,7 +126,7 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="6" name="Game">
+ <objectgroup color="#ff0000" id="6" name="Game" class="GameClass" tintcolor="#0000ff" offsetx="0" offsety="13" parallaxx="2.5">
   <properties>
    <property name="excalibur" type="bool" value="true"/>
   </properties>

@@ -6,10 +6,15 @@
     <title>Tiled Parser Experiment</title>
 </head>
 <body>
+    <div>Parsed Successful? <span id="parsed"></span></div>
     <div>TSJ Diff:</div><div style="color:red" id="tsj-diff"></div>
     <div>TMJ Diff:</div><div style="color:red" id="tmj-diff"></div>
-    <pre id="tmx"></pre>
-    <pre id="tmj"></pre>
+    <section>
+        <details>
+            <pre id="tmx"></pre>
+            <pre id="tmj"></pre>
+        </details>
+    </section>
     <script type="module" src="./main.ts"></script>
 </body>
 </html>
