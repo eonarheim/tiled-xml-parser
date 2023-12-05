@@ -3,6 +3,7 @@ import levelTMJ from './level.tmj';
 import levelTMX from './level.tmx';
 
 import tilsetTSJ from './Platformer.tsj';
+// @ts-ignore THIS IS NOT A typescript file
 import tilesetTSX from './Platformer.tsx';
 
 import { TiledMap, TiledParser, TiledTilesetFile } from './tiled-parser';
