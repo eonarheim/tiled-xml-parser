@@ -92,12 +92,27 @@ const TiledTileLayerBase64 = TiledTileLayerBase.extend({
     compression: z.string(),
 });
 
+const TiledTileLayerChunk = z.object({
+    x: z.number(),
+    y: z.number(),
+    width: z.number(),
+    height: z.number(),
+    data: z.array(z.number()) // infinite chunks are only csv!
+});
+
+const TiledTileLayerInfinite = TiledTileLayerBase.extend({
+    startx: z.number(),
+    starty: z.number(),
+    chunks: z.array(TiledTileLayerChunk)
+});
+
 const TiledTileLayer = z.union([
     TiledTileLayerBase64,
     TiledTileLayerCSV,
     TiledTileLayerGZIP,
     TiledTileLayerZLib,
-    TiledTileLayerZStandard
+    TiledTileLayerZStandard,
+    TiledTileLayerInfinite
 ]);
 
 const TiledPoint = z.object({
@@ -520,7 +535,7 @@ export class TiledParser {
         return TiledTileset.parse(tileset);
     }
 
-    parseTileLayer(layerNode: Element): TiledLayer {
+    parseTileLayer(layerNode: Element, infinite: boolean): TiledLayer {
         const layer: any = {};
         layer.type = 'tilelayer';
         layer.compression = ''; // default uncompressed
@@ -537,23 +552,51 @@ export class TiledParser {
                     break;
                 }
                 case 'data': {
-                    const encoding = layerChild.getAttribute('encoding');
-                    // technically breaking compat, but this is useful
-                    layer.encoding = encoding;
+                    if (infinite) {
+                        layer.width = 0;
+                        layer.height = 0;
+                        layer.chunks = [];
+                        let minX = Infinity;
+                        let minY = Infinity;
+                        for (let chunkTag of layerChild.children) {
+                            if (chunkTag.tagName === 'chunk') {
+                                const chunk: any = {};
+                                this._parseAttributes(chunkTag, chunk);
 
-                    const compression = layerChild.getAttribute('compression');
-                    if (compression) {
-                        layer.compression = compression;
-                    }
+                                // If infinite there is no encoding other than CSV!
+                                chunk.data = chunkTag.textContent?.split(',').map(id => +id);
 
-                    switch(layer.encoding) {
-                        case 'base64': {
-                            layer.data = layerChild.textContent?.trim();
-                            break;
+                                // accumulate width/height from chunks
+                                minX = Math.min(minX, chunk.x);
+                                minY = Math.min(minY, chunk.y);
+                                layer.width += chunk.width;
+                                layer.height += chunk.height
+
+                                layer.chunks.push(chunk);
+                            }
                         }
-                        case 'csv': {// csv case
-                            layer.data = layerChild.textContent?.split(',').map(id => +id);
-                            break;
+                        layer.startx = minX;
+                        layer.starty = minY;
+
+                    } else {
+                        const encoding = layerChild.getAttribute('encoding');
+                        // technically breaking compat, but this is useful
+                        layer.encoding = encoding;
+
+                        const compression = layerChild.getAttribute('compression');
+                        if (compression) {
+                            layer.compression = compression;
+                        }
+
+                        switch(layer.encoding) {
+                            case 'base64': {
+                                layer.data = layerChild.textContent?.trim();
+                                break;
+                            }
+                            case 'csv': {// csv case
+                                layer.data = layerChild.textContent?.split(',').map(id => +id);
+                                break;
+                            }
                         }
                     }
                 }
@@ -659,7 +702,7 @@ export class TiledParser {
                     break;
                 }
                 case 'layer': {
-                    const layer = this.parseTileLayer(node);
+                    const layer = this.parseTileLayer(node, tiledMap.infinite);
                     tiledMap.layers.push(layer);
                     break;
                 }
