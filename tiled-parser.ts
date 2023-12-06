@@ -246,7 +246,7 @@ const TiledTilesetExternal = z.object({
     firstgid: z.number(),
     source: z.string()
 })
-
+//  hexsidelength="70" staggeraxis="y" staggerindex="odd"
 const TiledMap = z.object({
     type: z.string(),
     class: z.string().optional(),
@@ -262,6 +262,9 @@ const TiledMap = z.object({
     nextobjectid: z.number(),
     parallaxoriginx: z.number().optional(),
     parallaxoriginy: z.number().optional(),
+    hexsidelength: z.number().optional(),
+    staggeraxis: z.literal('y').or(z.literal('x')).optional(),
+    staggerindex: z.literal('odd').or(z.literal('even')).optional(),
     orientation: z.union([z.literal("isometric"), z.literal("orthogonal"), z.literal("staggered"), z.literal("hexagonal")]),
     renderorder: z.union([z.literal("right-down"), z.literal("right-up"), z.literal("left-down"), z.literal("left-up")]),
     backgroundcolor: z.string().optional(),
@@ -336,6 +339,7 @@ export class TiledParser {
             'parallaxoriginy',
             'parallaxx',
             'parallaxy',
+            'hexsidelength',
             'offsetx',
             'offsety',
             'id',
@@ -382,7 +386,6 @@ export class TiledParser {
 
         const text = objectNode.querySelector('text') as Element;
         if (text) {
-            console.log(text);
             object.text = {
                 text: text.textContent
             }
@@ -685,8 +688,6 @@ export class TiledParser {
         for (let mapChild of mapElement.children) {
             parseHelper(mapChild);
         }
-
-        console.log(mapElement);
 
         const parsed = TiledMap.parse(tiledMap);
 
