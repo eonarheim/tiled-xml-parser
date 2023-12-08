@@ -232,20 +232,27 @@ const TiledObjectGroup = z.object({
 const TiledTile = z.object({
     id: z.number(),
     type: z.string().optional(),
-    objectgroup: TiledObjectGroup,
-    properties: z.array(TiledProperty).optional()
+    objectgroup: TiledObjectGroup.optional(),
+    properties: z.array(TiledProperty).optional(),
+    // Tiles can be collections of images
+    image: z.string().optional(),
+    imageheight: z.number().optional(),
+    imagewidth: z.number().optional()
 })
 
 const TiledTileset = z.object({
     name: z.string(),
     firstgid: z.number().optional(),
-    image: z.string(),
-    imagewidth: z.number(),
-    imageheight: z.number(),
+    // optional image/width/height if collection of images
+    image: z.string().optional(),
+    imagewidth: z.number().optional(),
+    imageheight: z.number().optional(),
     columns: z.number(),
     tileheight: z.number(),
     tilewidth: z.number(),
     tilecount: z.number(),
+    // Can specify a drawing offset
+    tileoffset: TiledPoint.optional(),
     spacing: z.number(),
     margin: z.number(),
     tiles: z.array(z.union([TiledTile, TiledAnimation]))
@@ -433,8 +440,6 @@ export class TiledParser {
             if (halign) {
                 object.text.halign = halign;
             }
-
-
         }
 
         const point = objectNode.querySelector('point');
@@ -462,8 +467,12 @@ export class TiledParser {
                 })
             }
         }
-
-        return TiledObject.parse(object);
+        try {
+            return TiledObject.parse(object);
+        } catch (e) {
+            console.error('Could not parse object', object, e);
+            throw e;
+        }
     }
 
     parseTileset(tilesetNode: Element): TiledTileset | TiledTilesetExternal {
@@ -474,7 +483,11 @@ export class TiledParser {
         this._parseAttributes(tilesetNode, tileset);
 
         if (tileset.source) {
-            return TiledTilesetExternal.parse(tileset);
+            try {
+                return TiledTilesetExternal.parse(tileset);
+            } catch (e) {
+                console.error('Could not parse external tileset', tileset, e);
+            }
         }
 
         for (let tilesetChild of tilesetNode.children) {
@@ -490,6 +503,12 @@ export class TiledParser {
                     this._parseAttributes(tilesetChild, tile);
                     for (let tileChild of tilesetChild.children) {
                         switch (tileChild.tagName) {
+                            case 'image': {
+                                tile.image = tileChild.getAttribute('source');
+                                tile.imagewidth =  this._coerceNumber(tileChild.getAttribute('width'));
+                                tile.imageheight = this._coerceNumber(tileChild.getAttribute('height'));
+                                break;
+                            }
                             case 'objectgroup': {
                                 const objectgroup: any = {};
                                 objectgroup.type = 'objectgroup';
@@ -527,12 +546,22 @@ export class TiledParser {
                         }
                     }
 
-                    tileset.tiles.push(tile);
+                    try {
+                        tileset.tiles.push(TiledTile.parse(tile));
+                    } catch (e) {
+                        console.error('Could not parse Tile', tile, e);
+                        throw e;
+                    }
                     break;
                 }
             }
         }
-        return TiledTileset.parse(tileset);
+        try {
+            return TiledTileset.parse(tileset);
+        } catch (e) {
+            console.error('Could not parse Tileset', tileset, e);
+            throw e;
+        }
     }
 
     parseTileLayer(layerNode: Element, infinite: boolean): TiledLayer {
@@ -602,7 +631,12 @@ export class TiledParser {
                 }
             }
         }
-        return TiledLayer.parse(layer);
+        try {
+            return TiledLayer.parse(layer);
+        } catch (e) {
+            console.error('Could not parse tiled tile layer', layer, e);
+            throw e;
+        }
     }
 
     parseObjectGroup(groupNode: Element): TiledLayer {
@@ -629,7 +663,12 @@ export class TiledParser {
             }
         }
         
-        return TiledLayer.parse(group);
+        try {
+            return TiledLayer.parse(group);
+        } catch (e) {
+            console.error('Could not parse object group', group, e);
+            throw e;
+        }
     }
 
     parseImageLayer(imageNode: Element): TiledLayer {
@@ -650,7 +689,12 @@ export class TiledParser {
 
         this._parseAttributes(imageNode, imageLayer);
         
-        return TiledLayer.parse(imageLayer);
+        try {
+            return TiledLayer.parse(imageLayer);
+        } catch (e) {
+            console.error('Could not parse layer', imageLayer, e);
+            throw e;
+        }
     }
 
     /**
@@ -667,7 +711,12 @@ export class TiledParser {
         (tileset as any).type = 'tileset';
         this._parseAttributes(tilesetElement, tileset);
 
-        return TiledTilesetFile.parse(tileset);
+        try {
+            return TiledTilesetFile.parse(tileset);
+        } catch (e) {
+            console.error('Could not parse tileset file', tileset, e);
+            throw e;
+        }
     }
 
 
@@ -732,8 +781,14 @@ export class TiledParser {
             parseHelper(mapChild);
         }
 
-        const parsed = TiledMap.parse(tiledMap);
+        let map!: TiledMap;
+        try {
+            map = TiledMap.parse(tiledMap);
+        } catch (e) {
+            console.error('Could not parse map', map, e);
+            throw e;
+        }
 
-        return parsed;
+        return map;
     }
 }

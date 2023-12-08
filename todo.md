@@ -3,7 +3,8 @@
 [x] Parse xml into canonical tmj schema provided by zod
 [x] Parse external tsx into canonical tsj
 [x] Infinite maps
-[ ] Isometric
+[x] Tileset tileoffset
+[x] Isometric
 [x] Hexagonal
 [ ] Parse templates!
 [ ] Poly lines

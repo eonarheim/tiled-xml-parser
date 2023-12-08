@@ -3,6 +3,7 @@ import levelTMJ from './level.tmj';
 import levelTMX from './level.tmx';
 import hexagonTMX from './hexagon.tmx';
 import infiniteTMX from './infinite.tmx';
+import isometricTMX from './isometric.tmx';
 
 import tilsetTSJ from './Platformer.tsj';
 // @ts-ignore THIS IS NOT A typescript file
@@ -18,6 +19,7 @@ const parser = new TiledParser();
 let tm!: TiledMap;
 let hexagon!: TiledMap;
 let infinite!: TiledMap;
+let isometric!: TiledMap;
 let ts!: TiledTilesetFile;
 let success = false;
 
@@ -25,8 +27,11 @@ try {
     // tm = parser.parse(levelTMX);
     // hexagon = parser.parse(hexagonTMX);
     //console.log(hexagon);
-    infinite = parser.parse(infiniteTMX);
-    console.log(infinite);
+    // infinite = parser.parse(infiniteTMX);
+    // console.log(infinite);
+    isometric = parser.parse(isometricTMX);
+    console.log(isometric);
+
     ts = parser.parseExternalTsx(tilesetTSX);
     success = true;
 } catch (e) {
