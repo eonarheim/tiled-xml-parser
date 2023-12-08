@@ -11,16 +11,16 @@
             "scaleInDock": 1
         },
         "isometric-staggered.tmx": {
-            "scale": 0.27772256728778466,
+            "scale": 0.33,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1209.840465185627,
-                "y": 306.0608319666021
+                "x": 1078.7878787878785,
+                "y": 342.4242424242424
             }
         },
         "isometric-staggered.tmx#isometric": {
             "dynamicWrapping": true,
-            "scaleInDock": 1
+            "scaleInDock": 0.125
         },
         "isometric.tmx": {
             "scale": 0.39398268398268393,

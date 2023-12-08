@@ -807,7 +807,6 @@ export class TiledParser {
         this._parseAttributes(mapElement, tiledMap);
 
         const parseHelper = (node: Element) => {
-            console.log(node);
             switch (node.tagName) {
                 case 'group': {
                     // recurse through groups!
