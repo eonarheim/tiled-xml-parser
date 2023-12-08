@@ -24,13 +24,13 @@ let ts!: TiledTilesetFile;
 let success = false;
 
 try {
-    // tm = parser.parse(levelTMX);
+    tm = parser.parse(levelTMX);
     // hexagon = parser.parse(hexagonTMX);
     //console.log(hexagon);
     // infinite = parser.parse(infiniteTMX);
     // console.log(infinite);
-    isometric = parser.parse(isometricTMX);
-    console.log(isometric);
+    // isometric = parser.parse(isometricTMX);
+    // console.log(isometric);
 
     ts = parser.parseExternalTsx(tilesetTSX);
     success = true;

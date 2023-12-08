@@ -146,16 +146,14 @@ const TiledObject = z.object({
     text: TiledText.optional(),
     point: z.boolean().optional(),
     ellipse: z.boolean().optional(),
+    polyline: z.array(TiledPoint).optional(),
     polygon: TiledPolygon.optional(),
     properties: z.array(TiledProperty).optional(),
 })
 
 const TiledAnimation = z.object({
-    id: z.number(),
-    animation: z.array(z.object({
-        duration: z.number(),
-        tileid: z.number()
-    }))
+    duration: z.number(),
+    tileid: z.number()
 });
 
 const TiledObjectLayer = z.object({
@@ -232,6 +230,7 @@ const TiledObjectGroup = z.object({
 const TiledTile = z.object({
     id: z.number(),
     type: z.string().optional(),
+    animation: z.array(TiledAnimation).optional(),
     objectgroup: TiledObjectGroup.optional(),
     properties: z.array(TiledProperty).optional(),
     // Tiles can be collections of images
@@ -255,7 +254,7 @@ const TiledTileset = z.object({
     tileoffset: TiledPoint.optional(),
     spacing: z.number(),
     margin: z.number(),
-    tiles: z.array(z.union([TiledTile, TiledAnimation]))
+    tiles: z.array(TiledTile)
 })
 
 const TiledTilesetFile = TiledTileset.extend({
@@ -452,8 +451,8 @@ export class TiledParser {
             object.ellipse = true;
         }
 
-        const polygon = objectNode.querySelector('polygon');
 
+        const polygon = objectNode.querySelector('polygon');
         if (polygon) {
             const points = polygon.getAttribute('points')?.split(' ');
             object.polygon = [];
@@ -467,6 +466,22 @@ export class TiledParser {
                 })
             }
         }
+
+        const polyline = objectNode.querySelector('polyline');
+        if (polyline) {
+            const points = polyline.getAttribute('points')?.split(' ');
+            object.polyline = [];
+            if (points) {
+                points.forEach(p => {
+                    const point = p.split(',');
+                    object.polyline.push({
+                        x: +point[0],
+                        y: +point[1]
+                    })
+                })
+            }
+        }
+
         try {
             return TiledObject.parse(object);
         } catch (e) {
