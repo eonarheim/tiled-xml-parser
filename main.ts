@@ -1,14 +1,14 @@
 
-import levelTMJ from './level.tmj';
-import levelTMX from './level.tmx';
-import hexagonTMX from './hexagon.tmx';
-import infiniteTMX from './infinite.tmx';
-import isometricTMX from './isometric.tmx';
-import keyblockTX from './keyblock.tx';
+import levelTMJ from './tiled/level.tmj';
+import levelTMX from './tiled/level.tmx';
+import hexagonTMX from './tiled/hexagon.tmx';
+import infiniteTMX from './tiled/infinite.tmx';
+import isometricTMX from './tiled/isometric.tmx';
+import keyblockTX from './tiled/keyblock.tx';
 
-import tilsetTSJ from './Platformer.tsj';
+import tilsetTSJ from './tiled/Platformer.tsj';
 // @ts-ignore THIS IS NOT A typescript file
-import tilesetTSX from './Platformer.tsx';
+import tilesetTSX from './tiled/Platformer.tsx';
 
 import { TiledMap, TiledParser, TiledTemplateFile, TiledTilesetFile } from './tiled-parser';
 import { diffString } from 'json-diff';
