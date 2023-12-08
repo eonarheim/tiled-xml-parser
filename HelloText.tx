@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object name="HelloText" type="FadeIN" width="80" height="17.875" rotation="35">
+  <text fontfamily="Segoe Print" pixelsize="48" color="#ff0000" halign="justify" valign="center">Hello World</text>
+ </object>
+</template>

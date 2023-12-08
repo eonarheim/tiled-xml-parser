@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" class="test" orientation="orthogonal" renderorder="right-down" compressionlevel="1" width="30" height="20" tilewidth="20" tileheight="20" infinite="0" parallaxoriginx="8" parallaxoriginy="16" backgroundcolor="#22b2b2" nextlayerid="10" nextobjectid="10">
+<map version="1.10" tiledversion="1.10.2" class="test" orientation="orthogonal" renderorder="right-down" compressionlevel="1" width="30" height="20" tilewidth="20" tileheight="20" infinite="0" parallaxoriginx="8" parallaxoriginy="16" backgroundcolor="#22b2b2" nextlayerid="10" nextobjectid="20">
  <editorsettings>
   <export target="level.tmj" format="json"/>
  </editorsettings>
@@ -147,14 +147,17 @@
    <point/>
   </object>
   <object id="6" template="KeyBlock.tx" type="Keyable" x="440.667" y="121.667"/>
-  <object id="7" name="HelloText" type="FadeIN" x="400.667" y="63.0625" width="80" height="17.875" rotation="35">
-   <text fontfamily="Segoe Print" pixelsize="48" color="#ff0000" halign="justify" valign="center">Hello World</text>
-  </object>
+  <object id="7" template="HelloText.tx" type="FadeIN" x="400.667" y="63.0625"/>
   <object id="8" x="80.6667" y="138">
    <polyline points="0,0 94.6667,-93.3333 164,-90"/>
   </object>
   <object id="9" x="366" y="40">
    <polyline points="0,0 107.333,-4 132,86.6667 176,88.6667 176,164 212,162.667 212.667,60.6667 156,60 124.667,-30 -5.33333,-26.6667 -110.667,-25.3333"/>
   </object>
+  <object id="15" template="Heart.tx" type="Health" x="358.5" y="158.75"/>
+  <object id="16" template="Key.tj" type="Key" x="499.25" y="178.5"/>
+  <object id="17" name="OtherKey" type="OtherKey" gid="406" x="477.25" y="178.25" width="21" height="21"/>
+  <object id="18" gid="406" x="499.5" y="132.75" width="21" height="21"/>
+  <object id="19" gid="406" x="476" y="140.75" width="21" height="21"/>
  </objectgroup>
 </map>

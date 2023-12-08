@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <tileset firstgid="1" source="ExternalPlatformer.tsx"/>
+ <object name="Heart" type="Health" gid="374" width="21" height="21">
+  <properties>
+   <property name="hp" type="int" value="5"/>
+  </properties>
+ </object>
+</template>

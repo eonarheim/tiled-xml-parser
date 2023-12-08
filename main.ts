@@ -4,12 +4,13 @@ import levelTMX from './level.tmx';
 import hexagonTMX from './hexagon.tmx';
 import infiniteTMX from './infinite.tmx';
 import isometricTMX from './isometric.tmx';
+import keyblockTX from './keyblock.tx';
 
 import tilsetTSJ from './Platformer.tsj';
 // @ts-ignore THIS IS NOT A typescript file
 import tilesetTSX from './Platformer.tsx';
 
-import { TiledMap, TiledParser, TiledTilesetFile } from './tiled-parser';
+import { TiledMap, TiledParser, TiledTemplateFile, TiledTilesetFile } from './tiled-parser';
 import { diffString } from 'json-diff';
 
 const tmx$ = document.getElementById('tmx') as HTMLPreElement;
@@ -20,6 +21,7 @@ let tm!: TiledMap;
 let hexagon!: TiledMap;
 let infinite!: TiledMap;
 let isometric!: TiledMap;
+let tx!: TiledTemplateFile;
 let ts!: TiledTilesetFile;
 let success = false;
 
@@ -31,8 +33,10 @@ try {
     // console.log(infinite);
     // isometric = parser.parse(isometricTMX);
     // console.log(isometric);
+    tx = parser.parseExternalTemplate(keyblockTX);
+    console.log(tx);
 
-    ts = parser.parseExternalTsx(tilesetTSX);
+    ts = parser.parseExternalTileset(tilesetTSX);
     success = true;
 } catch (e) {
     success = false;

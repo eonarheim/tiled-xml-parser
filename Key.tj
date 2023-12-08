@@ -1,0 +1,18 @@
+{ "object":
+    {
+     "gid":404,
+     "height":21,
+     "id":16,
+     "name":"Key",
+     "rotation":0,
+     "type":"Key",
+     "visible":true,
+     "width":21
+    },
+ "tileset":
+    {
+     "firstgid":1,
+     "source":"ExternalPlatformer.tsx"
+    },
+ "type":"template"
+}

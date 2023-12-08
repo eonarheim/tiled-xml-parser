@@ -1,0 +1,33 @@
+{
+    "activeFile": "level.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "ExternalPlatformer.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "level.tmx": {
+            "scale": 4,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": 406.75,
+                "y": 71.75
+            }
+        },
+        "level.tmx#Platformer": {
+            "scaleInDock": 1
+        }
+    },
+    "last.objectTemplatePath": "C:/projects/tiled-parser",
+    "openFiles": [
+        "level.tmx"
+    ],
+    "project": "test.tiled-project",
+    "property.type": "int",
+    "recentFiles": [
+        "level.tmx"
+    ]
+}

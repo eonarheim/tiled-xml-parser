@@ -11,6 +11,14 @@ declare module "*.tsx" {
     const value: string;
     export default value;
 }
+declare module "*.tx" {
+    const value: string;
+    export default value;
+}
+declare module "*.tj" {
+    const value: string;
+    export default value;
+}
 declare module "*.tsj" {
     const value: string;
     export default value;

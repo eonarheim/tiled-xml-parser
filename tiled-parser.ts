@@ -133,23 +133,24 @@ const TiledText = z.object({
 })
 
 const TiledObject = z.object({
-    id: z.number(),
-    name: z.string(),
+    id: z.number().optional(), // Template files might not have an id for some reason
+    name: z.string().optional(),
     type: z.string(),
     x: z.number(),
     y: z.number(),
-    rotation: z.number(),
-    height: z.number(),
-    width: z.number(),
-    visible: z.boolean(),
+    rotation: z.number().optional(),
+    height: z.number().optional(),
+    width: z.number().optional(),
+    visible: z.boolean().optional(),
     gid: z.number().optional(),
     text: TiledText.optional(),
     point: z.boolean().optional(),
     ellipse: z.boolean().optional(),
     polyline: z.array(TiledPoint).optional(),
     polygon: TiledPolygon.optional(),
+    template: z.string().optional(),
     properties: z.array(TiledProperty).optional(),
-})
+});
 
 const TiledAnimation = z.object({
     duration: z.number(),
@@ -196,7 +197,7 @@ const TiledImageLayer = z.object({
 });
 
 
-// TODO recursive Group Layer definition
+// FIXME recursive Group Layer definition
 // const TiledGroupLayerBase = z.object({
 //     name: z.string(),
 //     id: z.number(),
@@ -266,7 +267,16 @@ const TiledTilesetFile = TiledTileset.extend({
 const TiledTilesetExternal = z.object({
     firstgid: z.number(),
     source: z.string()
-})
+});
+
+
+
+const TiledTemplateFile = z.object({
+    object: TiledObject.extend({id: z.number().optional()}),
+    tileset: TiledTilesetExternal.optional(),
+    type: z.literal('template')
+});
+
 //  hexsidelength="70" staggeraxis="y" staggerindex="odd"
 const TiledMap = z.object({
     type: z.string(),
@@ -301,6 +311,7 @@ export type TiledTile = z.infer<typeof TiledTile>;
 export type TiledTileset = z.infer<typeof TiledTileset>;
 export type TiledTilesetExternal = z.infer<typeof TiledTilesetExternal>;
 export type TiledTilesetFile = z.infer<typeof TiledTilesetFile>;
+export type TiledTemplateFile = z.infer<typeof TiledTemplateFile>;
 export type TiledMap = z.infer<typeof TiledMap>;
 export type TiledLayer = z.infer<typeof TiledLayer>;
 export type TiledProperty = z.infer<typeof TiledProperty>;
@@ -389,14 +400,18 @@ export class TiledParser {
 
     parseObject(objectNode: Element): TiledObject {
         const object: any = {};
-        object.name = '';
         object.type = '';
-        object.visible = true;
         object.x = 0;
         object.y = 0;
-        object.rotation = 0;
-        object.height = 0;
-        object.width = 0;
+        
+        if (!objectNode.getAttribute('template')) {
+            object.visible = true;
+            object.name = '';
+            object.rotation = 0;
+            object.height = 0;
+            object.width = 0;
+        }
+
         this._parseAttributes(objectNode, object);
 
 
@@ -712,13 +727,32 @@ export class TiledParser {
         }
     }
 
+    parseExternalTemplate(txXml: string): TiledTemplateFile {
+        const domParser = new DOMParser();
+        const doc = domParser.parseFromString(txXml, 'application/xml');
+        const templateElement = doc.querySelector('template') as Element;
+        const template : any = {};
+        template.type = 'template';
+        const objectElement = templateElement.querySelector('object');
+        if (objectElement) {
+            template.object = this.parseObject(objectElement);
+        }
+
+        const tileSetElement = templateElement.querySelector('tileset');
+        if (tileSetElement) {
+            template.tileset = this.parseTileset(tileSetElement);
+        }
+
+        return TiledTemplateFile.parse(template);
+    }
+
     /**
      * Takes Tiled tmx xml and produces the equivalent Tiled txj (json) content
-     * @param xml 
+     * @param tsxXml 
      */
-    parseExternalTsx(xml: string): TiledTilesetFile {
+    parseExternalTileset(tsxXml: string): TiledTilesetFile {
         const domParser = new DOMParser();
-        const doc = domParser.parseFromString(xml, 'application/xml');
+        const doc = domParser.parseFromString(tsxXml, 'application/xml');
         const tilesetElement = doc.querySelector('tileset') as Element;
 
         const tileset = this.parseTileset(tilesetElement);
@@ -737,12 +771,12 @@ export class TiledParser {
 
     /**
      * Takes Tiled tmx xml and produces the equivalent Tiled tmj (json) content
-     * @param xml 
+     * @param tmxXml 
      * @returns 
      */
-    parse(xml: string): TiledMap {
+    parse(tmxXml: string): TiledMap {
         const domParser = new DOMParser();
-        const doc = domParser.parseFromString(xml, 'application/xml');
+        const doc = domParser.parseFromString(tmxXml, 'application/xml');
 
         const mapElement = doc.querySelector('map') as Element;
 

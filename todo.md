@@ -5,9 +5,10 @@
 [x] Infinite maps
 [x] Tileset tileoffset
 [x] Isometric
+[ ] Isometric Staggered
 [x] Hexagonal
-[ ] Parse templates!
-[ ] Poly lines
+[x] Parse templates!
+[x] Poly lines
 [ ] There are a number of tiled properties that have assumed defaults if they don't exist
   - These should be documented or available from the parser
   - Text is a big one
