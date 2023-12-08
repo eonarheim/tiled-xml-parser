@@ -5,7 +5,7 @@
 [x] Infinite maps
 [x] Tileset tileoffset
 [x] Isometric
-[ ] Isometric Staggered
+[x] Isometric Staggered
 [x] Hexagonal
 [x] Parse templates!
 [x] Poly lines

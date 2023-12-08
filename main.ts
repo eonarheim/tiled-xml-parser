@@ -4,6 +4,8 @@ import levelTMX from './tiled/level.tmx';
 import hexagonTMX from './tiled/hexagon.tmx';
 import infiniteTMX from './tiled/infinite.tmx';
 import isometricTMX from './tiled/isometric.tmx';
+import isometricStaggeredTMX from './tiled/isometric-staggered.tmx';
+import isometricStaggeredTMJ from './tiled/isometric-staggered.tmj';
 import keyblockTX from './tiled/keyblock.tx';
 
 import tilsetTSJ from './tiled/Platformer.tsj';
@@ -33,8 +35,15 @@ try {
     // console.log(infinite);
     // isometric = parser.parse(isometricTMX);
     // console.log(isometric);
+    isometric = parser.parse(isometricStaggeredTMX);
+    console.log(isometric);
+    console.log(diffString(isometric, JSON.parse(isometricStaggeredTMJ), {
+        excludeKeys: ['encoding'], // we do this on purpose
+        precision: 3
+    }));
+
     tx = parser.parseExternalTemplate(keyblockTX);
-    console.log(tx);
+    // console.log(tx);
 
     ts = parser.parseExternalTileset(tilesetTSX);
     success = true;

@@ -10,25 +10,51 @@
             "dynamicWrapping": false,
             "scaleInDock": 1
         },
+        "isometric-staggered.tmx": {
+            "scale": 0.27772256728778466,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1209.840465185627,
+                "y": 306.0608319666021
+            }
+        },
+        "isometric-staggered.tmx#isometric": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1
+        },
+        "isometric.tmx": {
+            "scale": 0.39398268398268393,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 835.0620810899903,
+                "y": 550.7856279529723
+            }
+        },
+        "isometric.tmx#isometric": {
+            "scaleInDock": 1
+        },
         "level.tmx": {
             "scale": 4,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": 439.5,
-                "y": 183.375
+                "x": 450.5,
+                "y": 127.25
             }
         },
         "level.tmx#Platformer": {
             "scaleInDock": 1
         }
     },
+    "last.exportedFilePath": "C:/projects/tiled-parser/tiled",
     "last.objectTemplatePath": "C:/projects/tiled-parser",
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "openFiles": [
         "level.tmx"
     ],
     "project": "test.tiled-project",
     "property.type": "int",
     "recentFiles": [
+        "isometric.tmx",
         "level.tmx"
     ]
 }

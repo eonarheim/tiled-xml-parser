@@ -251,6 +251,12 @@ const TiledTileset = z.object({
     tileheight: z.number(),
     tilewidth: z.number(),
     tilecount: z.number(),
+    
+    grid: z.object({
+        height: z.number(),
+        width: z.number(),
+        orientation: z.string()
+    }).optional(),
     // Can specify a drawing offset
     tileoffset: TiledPoint.optional(),
     spacing: z.number(),
@@ -522,6 +528,18 @@ export class TiledParser {
 
         for (let tilesetChild of tilesetNode.children) {
             switch (tilesetChild.tagName) {
+                case 'tileoffset': {
+                    const tileoffset: any = {};
+                    this._parseAttributes(tilesetChild, tileoffset);
+                    tileset.tileoffset = tileoffset;
+                    break;
+                }
+                case 'grid': {
+                    const grid: any = {};
+                    this._parseAttributes(tilesetChild, grid);
+                    tileset.grid = grid;
+                    break;
+                }
                 case 'image': {
                     tileset.image = tilesetChild.getAttribute('source');
                     tileset.imagewidth = this._coerceNumber(tilesetChild.getAttribute('width'));
