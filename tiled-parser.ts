@@ -323,6 +323,33 @@ export type TiledLayer = z.infer<typeof TiledLayer>;
 export type TiledProperty = z.infer<typeof TiledProperty>;
 export type TiledPropertyTypes = Pick<TiledProperty, 'type'>['type'];
 
+
+class BoundingBox {
+    constructor(public x: number, public y: number, public width: number, public height: number) {}
+
+    combine(other: BoundingBox) {
+
+        const right = this.x + this.width;
+        const bottom = this.y + this.height;
+
+        const otherRight = other.x + other.width;
+        const otherBottom = other.y + other.height;
+        
+        const endRight = Math.max(right, otherRight);
+        const endBottom = Math.max(bottom, otherBottom);
+
+
+        const compositeBB = new BoundingBox(
+            Math.min(this.x, other.x),
+            Math.min(this.y, other.y),
+            endRight - Math.min(this.x, other.x),
+            endBottom - Math.min(this.y, other.y)
+          );
+          return compositeBB;
+    }
+
+}
+
 export class TiledParser {
 
     _coerceNumber(value: any) {
@@ -635,6 +662,7 @@ export class TiledParser {
                         layer.chunks = [];
                         let minX = Infinity;
                         let minY = Infinity;
+                        let bounds: BoundingBox = new BoundingBox(0, 0, 0, 0);
                         for (let chunkTag of layerChild.children) {
                             if (chunkTag.tagName === 'chunk') {
                                 const chunk: any = {};
@@ -646,12 +674,17 @@ export class TiledParser {
                                 // accumulate width/height from chunks
                                 minX = Math.min(minX, chunk.x);
                                 minY = Math.min(minY, chunk.y);
-                                layer.width += chunk.width;
-                                layer.height += chunk.height
+
+                                // combining bounding boxes actually probably is easiest here
+                                const chunkBounds = new BoundingBox(chunk.x, chunk.y, chunk.width, chunk.height);
+
+                                bounds = bounds.combine(chunkBounds);
 
                                 layer.chunks.push(chunk);
                             }
                         }
+                        layer.width = bounds.width;
+                        layer.height = bounds.height;
                         layer.startx = minX;
                         layer.starty = minY;
 

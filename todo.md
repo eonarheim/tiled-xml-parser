@@ -9,7 +9,7 @@
 [x] Hexagonal
 [x] Parse templates!
 [x] Poly lines
-[ ] Infinite layer height/width wrong
+[x] Infinite layer height/width wrong
 [ ] Terrain sets? auto tiling?
 [ ] Tighten up optional v non-optional props
 [ ] There are a number of tiled properties that have assumed defaults if they don't exist
