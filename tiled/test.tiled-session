@@ -1,6 +1,7 @@
 {
     "activeFile": "level.tmx",
     "expandedProjectPaths": [
+        "tiled",
         "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -13,8 +14,8 @@
             "scale": 4,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": 406.75,
-                "y": 71.75
+                "x": 439.5,
+                "y": 183.375
             }
         },
         "level.tmx#Platformer": {
